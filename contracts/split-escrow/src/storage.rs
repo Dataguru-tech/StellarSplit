@@ -13,6 +13,15 @@ pub enum DataKey {
     WhitelistMember(u64, Address),
     FeeBps,
     Treasury,
+    Version,
+}
+
+pub fn set_version(env: &Env, version: &String) {
+    env.storage().instance().set(&DataKey::Version, version);
+}
+
+pub fn get_version(env: &Env) -> String {
+    env.storage().instance().get(&DataKey::Version).unwrap()
 }
 
 pub fn has_admin(env: &Env) -> bool {

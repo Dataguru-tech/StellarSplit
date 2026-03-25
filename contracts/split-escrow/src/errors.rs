@@ -13,6 +13,7 @@ pub enum Error {
     SplitNotReady = 8,
     TreasuryNotSet = 9,
     ParticipantCapExceeded = 10,
+    InvalidVersion = 11,
     SplitNotActive = 11,
     InvalidMetadata = 12,
 }
