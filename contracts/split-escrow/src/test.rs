@@ -156,7 +156,7 @@ fn test_upgrade_version_non_admin_fails() {
 }
 
 #[test]
-#[should_panic(expected = "HostError: Error(Contract, #10)")] // InvalidVersion
+#[should_panic(expected = "HostError: Error(Contract, #11)")] // InvalidVersion
 fn test_upgrade_version_invalid_semver_fails() {
     let (env, client, _, _, _, _, _) = setup();
     client.upgrade_version(&String::from_str(&env, "1.0"));

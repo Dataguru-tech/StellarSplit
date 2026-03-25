@@ -12,5 +12,6 @@ pub enum Error {
     SplitNotPending = 7,
     SplitNotReady = 8,
     TreasuryNotSet = 9,
-    InvalidVersion = 10,
+    ParticipantCapExceeded = 10,
+    InvalidVersion = 11,
 }
