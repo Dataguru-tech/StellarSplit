@@ -1,4 +1,5 @@
 #![cfg(test)]
+extern crate std;
 
 use crate::{SplitEscrowContract, SplitEscrowContractClient, SplitStatus};
 use soroban_sdk::token::{Client as TokenClient, StellarAssetClient as TokenAdminClient};
@@ -165,7 +166,7 @@ fn test_version_stored_on_init() {
 
 #[test]
 fn test_upgrade_version_admin() {
-    let (env, client, admin, _, _, _, _) = setup();
+    let (env, client, _admin, _, _, _, _) = setup();
 
     client.upgrade_version(&String::from_str(&env, "1.1.0"));
     assert_eq!(client.get_version(), String::from_str(&env, "1.1.0"));

@@ -4,6 +4,9 @@ const LEDGER_TTL_PERSISTENT: u32 = 31_536_000;
 
 use crate::types::Split;
 
+const LEDGER_TTL_PERSISTENT: u32 = 31_536_000;
+const LEDGER_TTL_THRESHOLD: u32 = 86_400;
+
 #[contracttype]
 #[derive(Clone)]
 pub enum DataKey {
