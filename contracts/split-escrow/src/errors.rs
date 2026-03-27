@@ -12,8 +12,10 @@ pub enum Error {
     SplitNotPending = 7,
     SplitNotReady = 8,
     TreasuryNotSet = 9,
+
     /// The maximum number of participants for this escrow has been reached.
     ParticipantCapExceeded = 10,
+
     // Money-critical/upgrade failures are asserted by numeric code in tests.
     InvalidVersion = 11,
     InvalidInput = 12,
