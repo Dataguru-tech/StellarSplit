@@ -5,9 +5,9 @@ use soroban_sdk::{contracttype, Address, Map, String, Vec};
 pub enum SplitStatus {
     Pending,
     Ready,
-    Released,
     /// Funds refunded to participants (e.g. dispute upheld).
     Cancelled,
+    Released,
 }
 
 /// Escrow split state. `participants.len()` is the current distinct participant count.

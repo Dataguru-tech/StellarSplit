@@ -14,8 +14,8 @@ pub use crate::types::{Split, SplitStatus};
 
 const DEFAULT_MAX_PARTICIPANTS: u32 = 50;
 const MAX_NOTE_LEN: u32 = 128;
-const MAX_METADATA_ENTRIES: u32 = 5;
-const MAX_METADATA_STRING_LEN: u32 = 64;
+const MAX_METADATA_ENTRIES: u32 = 32;
+const MAX_METADATA_STRING_LEN: u32 = 128;
 
 fn validate_note_len(note: &String) -> Result<(), Error> {
     if note.len() > MAX_NOTE_LEN {
@@ -89,15 +89,17 @@ impl SplitEscrowContract {
         Ok(())
     }
 
-    /// Create an escrow split with specific participant obligations.
-    /// `total_amount` must equal the sum of all obligations.
+    /// Create an escrow split. If `max_participants` is `None`, the cap defaults to 50.
+    /// `metadata` is fully optional but must be valid per constraints. If `note` is `None`, note is empty.
     pub fn create_escrow(
         env: Env,
         creator: Address,
         description: String,
         total_amount: i128,
+        metadata: Map<String, String>,
         obligations: Map<Address, i128>,
         max_participants: Option<u32>,
+        whitelist_enabled: bool,
         note: Option<String>,
     ) -> Result<u64, Error> {
         if !storage::has_admin(&env) {
@@ -127,6 +129,8 @@ impl SplitEscrowContract {
         if obligations.len() > cap {
             return Err(Error::ParticipantCapExceeded);
         }
+
+        validate_metadata(&metadata)?;
 
         let note_stored = match note {
             Some(n) => {
@@ -211,16 +215,18 @@ impl SplitEscrowContract {
             return Err(Error::Unauthorized);
         }
 
-        // Check if participant has an obligation.
-        let obligation = split
-            .obligations
-            .get(participant.clone())
-            .ok_or(Error::ParticipantNotOwed)?;
-
-        let current_balance = split.balances.get(participant.clone()).unwrap_or(0i128);
-        if current_balance + amount > obligation {
-            return Err(Error::InvalidAmount);
+        if !participant_known(&split.participants, &participant) {
+            if split.participants.len() >= split.max_participants {
+                return Err(Error::ParticipantCapExceeded);
+            }
+            split.participants.push_back(participant.clone());
         }
+
+        // Track per-participant deposited balances so we can refund on dispute outcomes.
+        let previous_balance = split.balances.get(participant.clone()).unwrap_or(0i128);
+        split
+            .balances
+            .set(participant.clone(), previous_balance + amount);
 
         let token_address = storage::get_token(&env);
         let token_client = token::Client::new(&env, &token_address);
