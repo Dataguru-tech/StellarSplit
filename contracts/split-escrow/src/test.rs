@@ -183,7 +183,7 @@ fn test_toggle_whitelist_allows_creator_to_restrict_access() {
     let split_id = client.create_escrow(
         &creator,
         &String::from_str(&env, "Restricted"),
-        &1_000,
+        &2_000,
         &None,
         &None,
         &None,
